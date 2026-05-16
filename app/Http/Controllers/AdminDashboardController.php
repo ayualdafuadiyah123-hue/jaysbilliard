@@ -23,7 +23,7 @@ class AdminDashboardController extends Controller
 
         // Calculate dynamic stats for today
         $pendapatanHariIni = \App\Models\Booking::where('booking_date', $today)
-                                ->whereIn('status', ['confirmed', 'completed'])
+                                ->whereIn('status', ['booked', 'confirmed', 'completed'])
                                 ->sum('total_price');
                                 
         $totalPemesanan = \App\Models\Booking::where('booking_date', $today)->count();
@@ -37,7 +37,7 @@ class AdminDashboardController extends Controller
             $endHour = sprintf('%02d:59:59', $i);
             
             $revenue = \App\Models\Booking::where('booking_date', $today)
-                        ->whereIn('status', ['confirmed', 'completed'])
+                        ->whereIn('status', ['booked', 'confirmed', 'completed'])
                         ->whereBetween('start_time', [$startHour, $endHour])
                         ->sum('total_price');
                         
@@ -143,10 +143,38 @@ class AdminDashboardController extends Controller
     public function confirmBooking($id)
     {
         $booking = \App\Models\Booking::findOrFail($id);
-        $booking->status = 'confirmed';
-        $booking->save();
+        // Only confirm if status is 'booked' (paid, awaiting admin confirmation)
+        if ($booking->status === 'booked') {
+            try {
+                $start = \Carbon\Carbon::parse($booking->start_time);
+                $end = \Carbon\Carbon::parse($booking->end_time);
+                $durationInMinutes = $start->diffInMinutes($end);
+                
+                $now = now();
+                $booking->status = 'confirmed';
+                $booking->start_time = $now->format('H:i:s');
+                $booking->end_time = $now->addMinutes($durationInMinutes)->format('H:i:s');
+                $booking->save();
+            } catch (\Exception $e) {
+                // Fallback if parsing fails
+                $booking->status = 'confirmed';
+                $booking->save();
+            }
+        }
 
-        return back()->with('success', 'Booking berhasil dikonfirmasi!');
+        return back()->with('success', 'Booking berhasil dikonfirmasi! Sesi permainan dimulai.');
+    }
+
+    public function cancelBooking($id)
+    {
+        $booking = \App\Models\Booking::findOrFail($id);
+        // Only cancel if status is 'booked' or 'pending'
+        if (in_array($booking->status, ['booked', 'pending'])) {
+            $booking->status = 'cancelled';
+            $booking->save();
+        }
+
+        return back()->with('success', 'Booking berhasil dibatalkan. Meja kini tersedia kembali.');
     }
 
     public function endSession($id)

@@ -111,7 +111,7 @@ class BookingController extends Controller
 
             if (in_array($transactionStatus, ['settlement', 'capture'])) {
                 $bookingIds = explode(',', $status->custom_field1);
-                Booking::whereIn('id', $bookingIds)->update(['status' => 'confirmed']);
+                Booking::whereIn('id', $bookingIds)->update(['status' => 'booked']);
                 return response()->json(['success' => true]);
             }
             return response()->json(['success' => false]);

@@ -74,7 +74,28 @@ class MejaController extends Controller
 
     public function destroy(Table $table)
     {
-        $table->delete();
-        return redirect()->route('admin.meja.index')->with('success', 'Meja berhasil dihapus.');
+        \Illuminate\Support\Facades\DB::transaction(function() use ($table) {
+            // Delete related bookings and their children
+            foreach ($table->bookings as $booking) {
+                foreach ($booking->orders as $order) {
+                    // Delete order details
+                    $order->details()->delete();
+                    // Delete the order
+                    $order->delete();
+                }
+                // Delete the booking
+                $booking->delete();
+            }
+
+            // Delete image from storage if exists
+            if ($table->image) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($table->image);
+            }
+
+            // Finally delete the table
+            $table->delete();
+        });
+
+        return redirect()->route('admin.meja.index')->with('success', 'Meja dan seluruh data terkait berhasil dihapus.');
     }
 }

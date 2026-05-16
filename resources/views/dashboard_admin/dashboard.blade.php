@@ -180,16 +180,18 @@
                                 $remainingTime = '00:00:00';
                                 if ($activeBooking && $activeBooking->status === 'confirmed') {
                                     try {
-                                        $start = \Carbon\Carbon::parse($activeBooking->start_time);
-                                        $end = \Carbon\Carbon::parse($activeBooking->end_time);
+                                        $baseDate = \Carbon\Carbon::parse($activeBooking->booking_date)->format('Y-m-d');
+                                        $start = \Carbon\Carbon::parse($baseDate . ' ' . $activeBooking->start_time);
+                                        $end = \Carbon\Carbon::parse($baseDate . ' ' . $activeBooking->end_time);
+                                        if ($end->lt($start)) { $end->addDay(); }
                                         $now = \Carbon\Carbon::now();
                                         
-                                        if ($now->greaterThan($start)) {
+                                        if ($now->gt($start)) {
                                             $diff = $start->diff($now);
                                             $elapsedTime = sprintf('%02d:%02d:%02d', ($diff->days * 24) + $diff->h, $diff->i, $diff->s);
                                         }
                                         
-                                        if ($end->greaterThan($now)) {
+                                        if ($end->gt($now)) {
                                             $diffRem = $now->diff($end);
                                             $remainingTime = sprintf('%02d:%02d:%02d', ($diffRem->days * 24) + $diffRem->h, $diffRem->i, $diffRem->s);
                                         } else {
@@ -218,7 +220,7 @@
                                 </div>
                                 <div class="adm-meja-card-body">
                                     <div class="adm-info-box">
-                                        @if($activeBooking)
+                                        @if($activeBooking && $statusClass !== 'tersedia')
                                             @if($statusClass === 'terisi')
                                                 <div class="adm-info-row" style="margin-bottom: 0.5rem;">
                                                     <span class="adm-label">PEMAIN</span>
@@ -226,17 +228,24 @@
                                                 </div>
                                                 <div class="adm-timer-container">
                                                     <div class="adm-timer-group">
-                                                        <span class="adm-timer-label">WAKTU BERLALU</span>
-                                                        <div class="adm-timer-display">{{ $elapsedTime }}</div>
+                                                        <span class="adm-timer-label">SISA WAKTU</span>
+                                                        <div class="adm-timer-display timer-remaining" 
+                                                             data-end="{{ \Carbon\Carbon::parse($baseDate . ' ' . $activeBooking->end_time)->lt(\Carbon\Carbon::parse($baseDate . ' ' . $activeBooking->start_time)) ? \Carbon\Carbon::parse($baseDate . ' ' . $activeBooking->end_time)->addDay()->toIso8601String() : \Carbon\Carbon::parse($baseDate . ' ' . $activeBooking->end_time)->toIso8601String() }}">
+                                                             {{ $remainingTime }}
+                                                        </div>
                                                     </div>
                                                     <div class="adm-timer-group">
-                                                        <span class="adm-timer-label">SISA WAKTU</span>
-                                                        <div class="adm-timer-display">{{ $remainingTime }}</div>
+                                                        <span class="adm-timer-label">WAKTU BERLALU</span>
+                                                        <div class="adm-timer-display timer-elapsed" 
+                                                             data-start="{{ \Carbon\Carbon::parse($baseDate . ' ' . $activeBooking->start_time)->toIso8601String() }}"
+                                                             data-duration="{{ \Carbon\Carbon::parse($activeBooking->start_time)->diffInSeconds(\Carbon\Carbon::parse($activeBooking->end_time)) }}">
+                                                             {{ $elapsedTime }}
+                                                        </div>
                                                     </div>
                                                 </div>
                                             @else
                                                 <div class="adm-info-row"><span class="adm-label">DIPESAN OLEH</span><span class="adm-value">{{ $activeBooking->customer_name }}</span></div>
-                                                <div class="adm-info-row"><span class="adm-label">DURASI</span><span class="adm-value">{{ $activeBooking->duration ?? '2 Jam' }}</span></div>
+                                                <div class="adm-info-row"><span class="adm-label">DURASI</span><span class="adm-value">{{ \Carbon\Carbon::parse($activeBooking->start_time)->diffInHours(\Carbon\Carbon::parse($activeBooking->end_time)) }} Jam</span></div>
                                                 <div class="adm-info-row"><span class="adm-label">MAIN JAM</span><span class="adm-value">{{ $activeBooking->start_time }}</span></div>
                                                 <div style="margin-top: auto;">
                                                     <div class="adm-info-row"><span class="adm-label">DIPESAN JAM</span><span class="adm-value">{{ $activeBooking->created_at->format('H:i') }}</span></div>
@@ -258,16 +267,22 @@
                                             @csrf
                                         </form>
                                     @elseif($statusClass === 'dipesan')
-                                        <form action="{{ route('admin.booking.confirm', $activeBooking->id) }}" method="POST" style="display: contents;">
-                                            @csrf
-                                            <button type="submit" class="btn-konfirmasi" onclick="return confirmComplete(this.form, '{{ $activeBooking->customer_name }}')">KONFIRMASI</button>
-                                        </form>
+                                        <div style="display: flex; gap: 8px; width: 100%;">
+                                            <form action="{{ route('admin.booking.confirm', $activeBooking->id) }}" method="POST" style="flex: 1;">
+                                                @csrf
+                                                <button type="submit" class="btn-konfirmasi" onclick="return confirmAction(this.form, '{{ $activeBooking->customer_name }}', 'konfirmasi')">KONFIRMASI</button>
+                                            </form>
+                                            <form action="{{ route('admin.booking.cancel', $activeBooking->id) }}" method="POST" style="flex: 1;">
+                                                @csrf
+                                                <button type="submit" class="btn-batal" onclick="return confirmAction(this.form, '{{ $activeBooking->customer_name }}', 'batal')">BATAL</button>
+                                            </form>
+                                        </div>
                                     @else
                                         <div style="flex:1"></div>
                                     @endif
                                     <div class="btn-chat-icon adm-btn-chat" data-meja="{{ $table->id }}">
                                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                                        @if($activeBooking && $activeBooking->status === 'pending')
+                                        @if($activeBooking && in_array($activeBooking->status, ['pending', 'booked']))
                                             <span class="notif-badge">!</span>
                                         @endif
                                     </div>
@@ -293,18 +308,21 @@
     
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        function confirmComplete(form, customerName) {
+        function confirmAction(form, customerName, type) {
+            const isConfirm = type === 'konfirmasi';
             Swal.fire({
-                title: 'Konfirmasi Pesanan',
-                html: `Apakah Anda yakin ingin mengkonfirmasi pesanan <b>${customerName}</b>? <br><span style="font-size: 0.85rem; color: #8a8a98; margin-top: 10px; display: block;">Meja akan ditandai sebagai Terisi dan sesi permainan akan dimulai.</span>`,
-                icon: 'info',
-                iconColor: '#00e5ff',
+                title: isConfirm ? 'Konfirmasi Pesanan' : 'Batalkan Pesanan',
+                html: isConfirm 
+                    ? `Apakah Anda yakin ingin mengkonfirmasi pesanan <b>${customerName}</b>? <br><span style="font-size: 0.85rem; color: #8a8a98; margin-top: 10px; display: block;">Meja akan ditandai sebagai Terisi dan sesi permainan akan dimulai.</span>`
+                    : `Apakah Anda yakin ingin membatalkan pesanan <b>${customerName}</b>? <br><span style="font-size: 0.85rem; color: #8a8a98; margin-top: 10px; display: block;">Meja akan kembali menjadi tersedia.</span>`,
+                icon: isConfirm ? 'info' : 'warning',
+                iconColor: isConfirm ? '#00e5ff' : '#ff3b3b',
                 showCancelButton: true,
-                confirmButtonText: 'KONFIRMASI',
-                cancelButtonText: 'BATAL',
+                confirmButtonText: isConfirm ? 'KONFIRMASI' : 'BATALKAN',
+                cancelButtonText: 'KEMBALI',
                 background: '#111418',
                 color: '#fff',
-                confirmButtonColor: '#00e5ff',
+                confirmButtonColor: isConfirm ? '#00e5ff' : '#ff3b3b',
                 cancelButtonColor: 'transparent',
                 didOpen: () => {
                     const title = document.querySelector('.swal2-title');
@@ -337,6 +355,63 @@
         setTimeout(function() {
             window.location.reload();
         }, 30000);
+    </script>
+    <script>
+        // Real-time Timer Logic
+        function updateTimers() {
+            const now = new Date();
+
+            // Update Elapsed Timers (Capped at Duration)
+            document.querySelectorAll('.timer-elapsed').forEach(el => {
+                const startStr = el.dataset.start;
+                const durationSeconds = parseInt(el.dataset.duration);
+                if (!startStr || isNaN(durationSeconds)) return;
+
+                const startTime = new Date(startStr);
+                if (isNaN(startTime.getTime())) return;
+
+                let diffMs = now - startTime;
+                let diffSeconds = Math.floor(diffMs / 1000);
+
+                // Cap at duration
+                if (diffSeconds > durationSeconds) {
+                    diffSeconds = durationSeconds;
+                    el.style.color = "#8a8a98";
+                }
+
+                if (diffSeconds >= 0) {
+                    el.textContent = formatSeconds(diffSeconds);
+                }
+            });
+
+            // Update Remaining Timers
+            document.querySelectorAll('.timer-remaining').forEach(el => {
+                const endStr = el.dataset.end;
+                if (!endStr) return;
+
+                const endTime = new Date(endStr);
+                if (isNaN(endTime.getTime())) return;
+
+                const diffMs = endTime - now;
+                if (diffMs > 0) {
+                    el.textContent = formatSeconds(Math.floor(diffMs / 1000));
+                } else {
+                    el.textContent = "00:00:00";
+                    el.style.color = "#ff3b3b";
+                }
+            });
+        }
+
+        function formatSeconds(totalSeconds) {
+            if (totalSeconds < 0) totalSeconds = 0;
+            const hours = Math.floor(totalSeconds / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = totalSeconds % 60;
+            return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        }
+
+        setInterval(updateTimers, 1000);
+        updateTimers(); 
     </script>
 </body>
 </html>

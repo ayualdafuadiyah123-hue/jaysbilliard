@@ -239,6 +239,10 @@
                     <div class="time-slot" data-hour="19">19:00</div>
                     <div class="time-slot" data-hour="20">20:00</div>
                     <div class="time-slot" data-hour="21">21:00</div>
+                    <div class="time-slot" data-hour="22">22:00</div>
+                    <div class="time-slot" data-hour="23">23:00</div>
+                    <div class="time-slot" data-hour="24">00:00</div>
+                    <div class="time-slot" data-hour="25">01:00</div>
                 </div>
 
                 {{-- Duration --}}
@@ -446,17 +450,36 @@
 
             function updateTimeSlots() {
                 if (!selectedDate) return;
-                
+
                 const now = new Date();
                 const isToday = selectedDate.toDateString() === now.toDateString();
+
+                // For slots >= 24, they represent next-day hours (00:00, 01:00, 02:00)
+                // So if today is selected, they are always in the future (past midnight tonight)
+                // If tomorrow is selected, regular hours apply
+                const tomorrow = new Date(now);
+                tomorrow.setDate(now.getDate() + 1);
+                const isTomorrow = selectedDate.toDateString() === tomorrow.toDateString();
+
                 const currentHour = now.getHours();
 
                 timeSlots.forEach(slot => {
-                    const slotHour = parseInt(slot.dataset.hour);
-                    
-                    if (isToday && slotHour <= currentHour) {
+                    const dataHour = parseInt(slot.dataset.hour);
+                    let isPast = false;
+
+                    if (dataHour >= 24) {
+                        // These slots are 00:00-02:00 of the NEXT day
+                        // Disabled only if tomorrow is selected AND current time has passed that hour
+                        const realHour = dataHour - 24; // 24->0, 25->1, 26->2
+                        isPast = isTomorrow && realHour <= currentHour;
+                    } else {
+                        // Normal hours (14:00-23:00)
+                        isPast = isToday && dataHour <= currentHour;
+                    }
+
+                    if (isPast) {
                         slot.classList.add('disabled');
-                        slot.classList.remove('active'); // Deselect if was active
+                        slot.classList.remove('active');
                     } else {
                         slot.classList.remove('disabled');
                     }
@@ -853,11 +876,17 @@
                     return;
                 }
 
-                const activeTime = activeTimeSlot.innerText;
                 const duration = parseInt(rangeSlider.value);
-                const startHour = parseInt(activeTime.split(':')[0]);
-                const endHour = startHour + duration;
-                document.getElementById('summary-time').innerText = `${activeTime} - ${endHour}:00`;
+                const dataHour = parseInt(activeTimeSlot.dataset.hour);
+
+                // For data-hour >= 24, the real hour is dataHour - 24
+                const startRealHour = dataHour >= 24 ? dataHour - 24 : dataHour;
+                const endRealHour = (startRealHour + duration) % 24;
+
+                const startStr = String(startRealHour).padStart(2, '0') + ':00';
+                const endStr = String(endRealHour).padStart(2, '0') + ':00';
+
+                document.getElementById('summary-time').innerText = `${startStr} - ${endStr}`;
                 document.getElementById('summary-duration').innerText = duration + ' Jam';
             }
 

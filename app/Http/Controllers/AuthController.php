@@ -6,6 +6,8 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Laravel\Socialite\Facades\Socialite;
+use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
@@ -34,7 +36,7 @@ class AuthController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'username' => 'required|string|max:255|unique:users,username',
-            'email' => 'required|email|max:255|unique:users,email',
+            'email' => 'nullable|email|max:255|unique:users,email',
             'phone' => 'required|string|max:20',
             'password' => 'required|string|min:6',
         ]);
@@ -42,7 +44,7 @@ class AuthController extends Controller
         $user = User::create([
             'name' => $request->name,
             'username' => $request->username,
-            'email' => $request->email,
+            'email' => $request->email ?? null,
             'phone' => $request->phone,
             'password' => Hash::make($request->password),
             'role' => 'user',
@@ -106,5 +108,52 @@ class AuthController extends Controller
     public function adminLogout(Request $request)
     {
         return $this->logout($request);
+    }
+
+    // Redirect to Google
+    public function redirectToGoogle()
+    {
+        return Socialite::driver('google')
+            ->with(['prompt' => 'select_account'])
+            ->redirect();
+    }
+    
+
+    // Handle Google Callback
+    public function handleGoogleCallback()
+    {
+        try {
+            $googleUser = Socialite::driver('google')->user();
+            
+            $user = User::where('google_id', $googleUser->id)
+                        ->orWhere('email', $googleUser->email)
+                        ->first();
+
+            if (!$user) {
+                // Create new user
+                $user = User::create([
+                    'name' => $googleUser->name,
+                    'username' => 'user_' . Str::random(8),
+                    'email' => $googleUser->email,
+                    'phone' => '-',
+                    'password' => Hash::make(Str::random(16)),
+                    'role' => 'user',
+                    'google_id' => $googleUser->id,
+                ]);
+            } else {
+                // Update google_id if not set
+                if (!$user->google_id) {
+                    $user->update(['google_id' => $googleUser->id]);
+                }
+            }
+
+            Auth::login($user);
+            return redirect()->intended(route('dashboard'));
+
+        } catch (\Exception $e) {
+            return redirect()->route('login')->withErrors([
+                'error' => 'Gagal login dengan Google: ' . $e->getMessage()
+            ]);
+        }
     }
 }

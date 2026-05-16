@@ -34,7 +34,7 @@ class WebhookController extends Controller
             $bookingIds = explode(',', $customField1);
             
             if (in_array($transactionStatus, ['capture', 'settlement'])) {
-                Booking::whereIn('id', $bookingIds)->update(['status' => 'confirmed']);
+                Booking::whereIn('id', $bookingIds)->update(['status' => 'booked']);
             } elseif (in_array($transactionStatus, ['cancel', 'deny', 'expire'])) {
                 Booking::whereIn('id', $bookingIds)->update(['status' => 'cancelled']);
             } elseif ($transactionStatus == 'pending') {

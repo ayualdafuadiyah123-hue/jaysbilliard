@@ -25,6 +25,7 @@ Route::get('/admin/history', [AdminDashboardController::class, 'history'])->name
 Route::get('/admin/history/export', [AdminDashboardController::class, 'exportPdf'])->name('admin.history.export');
 Route::get('/admin/notifications/check', [AdminDashboardController::class, 'checkNotifications'])->name('admin.notifications.check');
 Route::post('/admin/booking/{id}/confirm', [AdminDashboardController::class, 'confirmBooking'])->name('admin.booking.confirm');
+Route::post('/admin/booking/{id}/cancel', [AdminDashboardController::class, 'cancelBooking'])->name('admin.booking.cancel');
 Route::post('/admin/booking/{id}/end', [AdminDashboardController::class, 'endSession'])->name('admin.booking.end');
 Route::delete('/admin/booking/{id}', [AdminDashboardController::class, 'deleteBooking'])->name('admin.booking.delete');
 Route::post('/admin/booking/{id}/status', [AdminDashboardController::class, 'updateStatus'])->name('admin.booking.updateStatus');
@@ -61,6 +62,10 @@ Route::middleware('guest')->group(function () {
 
     Route::get('/register', [AuthController::class , 'showRegister'])->name('register');
     Route::post('/register', [AuthController::class , 'register']);
+
+    // Google Login Routes
+    Route::get('/auth/google', [AuthController::class, 'redirectToGoogle'])->name('google.login');
+    Route::get('/auth/google/callback', [AuthController::class, 'handleGoogleCallback']);
 });
 
 // Auth - Authenticated only

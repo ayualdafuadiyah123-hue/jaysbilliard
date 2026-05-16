@@ -59,16 +59,6 @@
                     </div>
                 </div>
 
-                
-                <div class="flex flex-col gap-2">
-                    <label class="text-sm font-semibold text-white">Email</label>
-                    <div class="flex items-center bg-white/5 border border-primary/20 rounded-xl px-4 transition-all focus-within:border-primary focus-within:shadow-neon-sm">
-                        <span class="flex items-center text-white/35 mr-3">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
-                        </span>
-                        <input type="email" name="email" class="flex-1 bg-transparent border-none outline-none text-white text-sm py-3.5 placeholder:text-white/30" placeholder="Masukkan email anda" value="<?php echo e(old('email')); ?>" required>
-                    </div>
-                </div>
 
                 
                 <div class="flex flex-col gap-2">

@@ -393,6 +393,50 @@
 
 .btn-akhiri:hover { color: #fff; text-shadow: 0 0 15px #ff3b3b; }
 
+.btn-konfirmasi {
+    background: rgba(255, 171, 0, 0.05);
+    border: 1.5px solid #ffab00;
+    color: #ffab00;
+    padding: 0.9rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 950;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+.btn-konfirmasi:hover {
+    background: #ffab00;
+    color: #000;
+    box-shadow: 0 0 15px rgba(255, 171, 0, 0.4);
+}
+
+.btn-batal {
+    background: rgba(255, 59, 59, 0.05);
+    border: 1.5px solid #ff3b3b;
+    color: #ff3b3b;
+    padding: 0.9rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 950;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+.btn-batal:hover {
+    background: #ff3b3b;
+    color: #fff;
+    box-shadow: 0 0 15px rgba(255, 59, 59, 0.4);
+}
+
 .btn-waktu {
     flex: 1;
     background: #1a1810;
