@@ -107,9 +107,30 @@
                             <div class="card-body">
                                 <div class="card-header-row">
                                     <h3 class="card-title"><?php echo e(strtoupper($table->name)); ?></h3>
-                                    <div class="card-status <?php echo e($table->status); ?>">
+                                    <?php
+                                        $activeBooking = $table->bookings ? $table->bookings->first() : null;
+                                        $statusClass = 'tersedia';
+                                        $statusText = 'TERSEDIA';
+
+                                        if ($table->status === 'maintenance') {
+                                            $statusClass = 'maintenance';
+                                            $statusText = 'MAINTENANCE';
+                                        } elseif ($activeBooking) {
+                                            if ($activeBooking->status === 'confirmed') {
+                                                $statusClass = 'terisi';
+                                                $statusText = 'TERISI';
+                                            } elseif (in_array($activeBooking->status, ['pending', 'booked', 'dipesan'])) {
+                                                $statusClass = 'dipesan';
+                                                $statusText = 'DIPESAN';
+                                            }
+                                        } elseif ($table->status === 'active') {
+                                            $statusClass = 'tersedia';
+                                            $statusText = 'TERSEDIA';
+                                        }
+                                    ?>
+                                    <div class="card-status <?php echo e($statusClass); ?>">
                                         <span class="status-dot-sm"></span> 
-                                        <?php echo e(strtoupper($table->status === 'active' ? 'Tersedia' : ($table->status === 'maintenance' ? 'Maintenance' : $table->status))); ?>
+                                        <?php echo e($statusText); ?>
 
                                     </div>
                                 </div>

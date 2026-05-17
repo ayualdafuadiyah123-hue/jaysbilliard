@@ -9,7 +9,13 @@ class MejaController extends Controller
 {
     public function index()
     {
-        $tables = Table::all();
+        $today = \Carbon\Carbon::now('Asia/Jakarta')->toDateString();
+        $tables = Table::with(['bookings' => function($query) use ($today) {
+            $query->whereIn('status', ['confirmed', 'booked', 'pending', 'dipesan'])
+                  ->where('booking_date', '>=', $today)
+                  ->orderBy('booking_date', 'asc')
+                  ->orderBy('start_time', 'asc');
+        }])->get();
         return view('dashboard_admin.meja', compact('tables'));
     }
 

@@ -17,7 +17,7 @@
             {{-- Top Bar --}}
             @include('component.c_dashboard.topbar.topbar', [
                 'topbar_title' => 'History Pemesanan',
-                'topbar_sub' => 'Lorem ipsum dolor sit amet'
+                'topbar_sub' => 'Data riwayat transaksi dan pemesanan pelanggan'
             ])
 
             <div class="adm-content adm-history-content">

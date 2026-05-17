@@ -219,10 +219,8 @@
                         </table>
                     </div>
                     
-                    <div class="adm-table-footer" style="padding: 20px;">
-                        <?php echo e($transactions->links()); ?>
+                    <?php echo e($transactions->links('component.c_dashboard.pagination')); ?>
 
-                    </div>
                 </div>
 
             </div>

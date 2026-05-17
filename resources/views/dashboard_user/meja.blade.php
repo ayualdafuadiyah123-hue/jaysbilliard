@@ -93,11 +93,11 @@
                                         kenyamanan maksimal.
                                     </p>
                                     <div class="tm-footer">
-                                        @if($statusClass === 'available')
-                                            <button class="tm-btn-add">TAMBAH</button>
-                                        @else
+                                        @if($statusClass === 'maintenance')
                                             <button class="tm-btn-add" disabled
-                                                style="opacity: 0.5; cursor: not-allowed; background: #333;">PENUH</button>
+                                                style="opacity: 0.5; cursor: not-allowed; background: #333;">MAINTENANCE</button>
+                                        @else
+                                            <button class="tm-btn-add">TAMBAH</button>
                                         @endif
                                         <button class="tm-btn-chat" style="position: relative;">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
@@ -571,18 +571,18 @@
                         txt.innerText = statusText;
                     }
                     if (btn) {
-                        if (statusClass === 'available') {
+                        if (statusClass === 'maintenance') {
+                            btn.disabled = true;
+                            btn.style.opacity = '0.5';
+                            btn.style.cursor = 'not-allowed';
+                            btn.style.background = '#333';
+                            btn.innerText = 'MAINTENANCE';
+                        } else {
                             btn.disabled = false;
                             btn.style.opacity = '1';
                             btn.style.cursor = 'pointer';
                             btn.style.background = 'linear-gradient(to right, var(--primary-cyan), #00c2ff)';
                             btn.innerText = 'TAMBAH';
-                        } else {
-                            btn.disabled = true;
-                            btn.style.opacity = '0.5';
-                            btn.style.cursor = 'not-allowed';
-                            btn.style.background = '#333';
-                            btn.innerText = 'PENUH';
                         }
                     }
                 });

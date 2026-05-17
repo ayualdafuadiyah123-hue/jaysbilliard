@@ -95,7 +95,14 @@ class BookingController extends Controller
 
     public function selectTable()
     {
-        return view('dashboard_admin.meja');
+        $today = \Carbon\Carbon::now('Asia/Jakarta')->toDateString();
+        $tables = Table::with(['bookings' => function($query) use ($today) {
+            $query->whereIn('status', ['confirmed', 'booked', 'pending', 'dipesan'])
+                  ->where('booking_date', '>=', $today)
+                  ->orderBy('booking_date', 'asc')
+                  ->orderBy('start_time', 'asc');
+        }])->get();
+        return view('dashboard_admin.meja', compact('tables'));
     }
 
     public function bookingSuccess(Request $request)

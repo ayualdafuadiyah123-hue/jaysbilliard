@@ -14,10 +14,11 @@ class AdminDashboardController extends Controller
     {
         $today = \Carbon\Carbon::now('Asia/Jakarta')->toDateString();
         
-        // Load tables with only relevant bookings for today to determine current table status
+        // Load tables with relevant bookings from today onwards to determine current table status
         $tables = Table::with(['bookings' => function($query) use ($today) {
-            $query->where('booking_date', $today)
+            $query->where('booking_date', '>=', $today)
                   ->whereIn('status', ['confirmed', 'booked', 'pending', 'dipesan'])
+                  ->orderBy('booking_date', 'asc')
                   ->orderBy('start_time', 'asc');
         }])->get();
 

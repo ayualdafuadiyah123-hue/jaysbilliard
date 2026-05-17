@@ -216,9 +216,7 @@
                         </table>
                     </div>
                     
-                    <div class="adm-table-footer" style="padding: 20px;">
-                        {{ $transactions->links() }}
-                    </div>
+                    {{ $transactions->links('component.c_dashboard.pagination') }}
                 </div>
 
             </div>

@@ -193,9 +193,10 @@
     letter-spacing: 0.06em;
 }
 
-.card-status.tersedia { color: #00e5ff; }
+.card-status.terisi { color: #00e5ff; }
 .card-status.dipesan { color: #ffab00; }
 .card-status.maintenance { color: #ff5252; }
+.card-status.tersedia { color: rgba(255, 255, 255, 0.45); }
 
 .status-dot-sm {
     width: 5px;

@@ -249,7 +249,13 @@
                                             <?php else: ?>
                                                 <div class="adm-info-row"><span class="adm-label">DIPESAN OLEH</span><span class="adm-value"><?php echo e($activeBooking->customer_name); ?></span></div>
                                                 <div class="adm-info-row"><span class="adm-label">DURASI</span><span class="adm-value"><?php echo e(\Carbon\Carbon::parse($activeBooking->start_time)->diffInHours(\Carbon\Carbon::parse($activeBooking->end_time))); ?> Jam</span></div>
-                                                <div class="adm-info-row"><span class="adm-label">MAIN JAM</span><span class="adm-value"><?php echo e($activeBooking->start_time); ?></span></div>
+                                                 <div class="adm-info-row"><span class="adm-label">MAIN JAM</span><span class="adm-value">
+                                                     <?php echo e(\Carbon\Carbon::parse($activeBooking->start_time)->format('H:i')); ?>
+
+                                                     <?php if($activeBooking->booking_date !== \Carbon\Carbon::now('Asia/Jakarta')->toDateString()): ?>
+                                                         (<?php echo e(\Carbon\Carbon::parse($activeBooking->booking_date)->translatedFormat('d M')); ?>)
+                                                     <?php endif; ?>
+                                                 </span></div>
                                                 <div style="margin-top: auto;">
                                                     <div class="adm-info-row"><span class="adm-label">DIPESAN JAM</span><span class="adm-value"><?php echo e($activeBooking->created_at->format('H:i')); ?></span></div>
                                                 </div>

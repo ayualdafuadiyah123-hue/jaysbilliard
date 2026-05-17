@@ -107,9 +107,30 @@
                             <div class="card-body">
                                 <div class="card-header-row">
                                     <h3 class="card-title">{{ strtoupper($table->name) }}</h3>
-                                    <div class="card-status {{ $table->status }}">
+                                    @php
+                                        $activeBooking = $table->bookings ? $table->bookings->first() : null;
+                                        $statusClass = 'tersedia';
+                                        $statusText = 'TERSEDIA';
+
+                                        if ($table->status === 'maintenance') {
+                                            $statusClass = 'maintenance';
+                                            $statusText = 'MAINTENANCE';
+                                        } elseif ($activeBooking) {
+                                            if ($activeBooking->status === 'confirmed') {
+                                                $statusClass = 'terisi';
+                                                $statusText = 'TERISI';
+                                            } elseif (in_array($activeBooking->status, ['pending', 'booked', 'dipesan'])) {
+                                                $statusClass = 'dipesan';
+                                                $statusText = 'DIPESAN';
+                                            }
+                                        } elseif ($table->status === 'active') {
+                                            $statusClass = 'tersedia';
+                                            $statusText = 'TERSEDIA';
+                                        }
+                                    @endphp
+                                    <div class="card-status {{ $statusClass }}">
                                         <span class="status-dot-sm"></span> 
-                                        {{ strtoupper($table->status === 'active' ? 'Tersedia' : ($table->status === 'maintenance' ? 'Maintenance' : $table->status)) }}
+                                        {{ $statusText }}
                                     </div>
                                 </div>
                                 <div class="card-details">

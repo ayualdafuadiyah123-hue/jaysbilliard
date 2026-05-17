@@ -17,7 +17,7 @@
             
             <?php echo $__env->make('component.c_dashboard.topbar.topbar', [
                 'topbar_title' => 'History Pemesanan',
-                'topbar_sub' => 'Lorem ipsum dolor sit amet'
+                'topbar_sub' => 'Data riwayat transaksi dan pemesanan pelanggan'
             ], array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
 
             <div class="adm-content adm-history-content">
