@@ -11,7 +11,7 @@
             <a href="<?php echo e(route('home')); ?>"
                 class="<?php echo e(request()->routeIs('home') ? 'text-[#00e5ff]' : 'hover:text-white'); ?> transition">Beranda</a>
             <a href="<?php echo e(route('rates')); ?>"
-                class="<?php echo e(request()->routeIs('rates') ? 'text-[#00e5ff]' : 'hover:text-white'); ?> transition">Meja</a>
+                class="<?php echo e(request()->routeIs('rates') ? 'text-[#00e5ff]' : 'hover:text-white'); ?> transition">Tarif</a>
             <a href="<?php echo e(route('location')); ?>"
                 class="<?php echo e(request()->routeIs('location') ? 'text-[#00e5ff]' : 'hover:text-white'); ?> transition">Lokasi</a>
         </div>
@@ -28,5 +28,4 @@
             </a>
         </div>
     </div>
-</nav>
-<?php /**PATH C:\laragon\www\jaysbilliard-main\resources\views/component/c_website/navbar.blade.php ENDPATH**/ ?>
+</nav><?php /**PATH C:\laragon\www\jaysbilliard-main\resources\views/component/c_website/navbar.blade.php ENDPATH**/ ?>

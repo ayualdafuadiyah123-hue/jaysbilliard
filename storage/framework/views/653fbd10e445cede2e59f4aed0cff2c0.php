@@ -11,7 +11,7 @@
         <div class="welcome-hero">
             <div class="hero-content">
                 <h1>Halo, <?php echo e(Auth::user()->name); ?>! </h1>
-                <p>Kalahkan rekor bermainmu hari ini. Meja terbaik kami sudah disiapkan khusus untuk kemenanganmu.</p>
+                <p>Rasakan sensasi bermain billiard dengan suasana modern dan nyaman di Jays Billiard.</p>
                 <div class="hero-actions">
                     <a href="<?php echo e(route('user.meja')); ?>" id="btn-pesan-meja" class="btn-neon">PESAN MEJA</a>
                     <a href="<?php echo e(route('user.fnb')); ?>" id="btn-menu-fnb" class="btn-ghost">MENU F&B</a>
@@ -36,25 +36,14 @@
                 </div>
             </div>
 
-            <div class="user-card stats-pink">
+            <div class="user-card stats-cyan">
                 <div class="card-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <polyline points="12 6 12 12 16 14"></polyline>
-                    </svg>
-                </div>
-                <div class="card-info">
-                    <span class="user-card-label">TOTAL BERMAIN</span>
-                    <span class="user-card-title" id="valTotalBermain"><?php echo e($totalHours); ?> JAM</span>
-                </div>
-            </div>
-
-            <div class="user-card stats-cyan" style="border-color: rgba(0, 229, 255, 0.2); background: rgba(0, 229, 255, 0.05);">
-                <div class="card-icon" style="color: #00e5ff;">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
                     </svg>
                 </div>
                 <div class="card-info">
@@ -85,12 +74,14 @@
                             <div class="act-icon dot-cyan"></div>
                             <div class="act-info">
                                 <span class="act-name">Booking <?php echo e(strtoupper($tableName)); ?></span>
-                                <span class="act-date"><?php echo e(\Carbon\Carbon::parse($activity->booking_date)->format('d M Y')); ?>, <?php echo e(\Carbon\Carbon::parse($activity->start_time)->format('H:i')); ?> WIB</span>
+                                <span class="act-date"><?php echo e(\Carbon\Carbon::parse($activity->booking_date)->format('d M Y')); ?>,
+                                    <?php echo e(\Carbon\Carbon::parse($activity->start_time)->format('H:i')); ?> WIB</span>
                             </div>
                             <span class="act-status success"><?php echo e($statusText); ?></span>
                         </div>
                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
-                        <div style="padding: 20px; text-align: center; color: rgba(255,255,255,0.2);">Belum ada aktivitas terbaru.</div>
+                        <div style="padding: 20px; text-align: center; color: rgba(255,255,255,0.2);">Belum ada aktivitas
+                            terbaru.</div>
                     <?php endif; ?>
                 </div>
             </div>
@@ -99,8 +90,8 @@
             <div class="promo-banner-card">
                 <div class="promo-badge">HOT DEAL</div>
                 <div class="promo-content">
-                    <h4>HAPPY HOUR MONDAY!</h4>
-                    <p>Dapatkan diskon 30% untuk pemesanan meja di jam 10:00 - 15:00. Khusus hari ini!</p>
+                    <h4>LET’S PLAY BILLIARD!</h4>
+                    <p>Rasakan sensasi bermain billiard dengan suasana modern dan nyaman di Jays Billiard.</p>
                 </div>
             </div>
         </div>

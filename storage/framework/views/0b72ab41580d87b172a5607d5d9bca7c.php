@@ -26,7 +26,8 @@
                 <div class="meja-grid w-[90%] h-[90%] relative md:w-[90%] md:h-[90%] sm:w-[85%] sm:h-[85%]">
                     <?php $__currentLoopData = $tables; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $table): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                         <?php
-                            $activeBooking = $table->bookings->first();
+                            $todayStr = \Carbon\Carbon::now('Asia/Jakarta')->toDateString();
+                            $activeBooking = $table->bookings->where('booking_date', $todayStr)->first();
                             $statusClass = 'available';
                             $statusText = 'TERSEDIA';
 
@@ -358,9 +359,13 @@
             const mpMonthsGrid = document.getElementById('mp-months-grid');
 
             let startDate = new Date(); // Start view from today
+            startDate.setHours(0, 0, 0, 0); 
             let selectedDate = null; // No date selected by default
             let durationSelected = false; // Flag for duration selection
             let pickerYear = startDate.getFullYear();
+
+            // Tables and Bookings data from PHP for dynamic map updates
+            const allTables = <?php echo json_encode($tables, 15, 512) ?>;
 
             const monthNames = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
 
@@ -438,9 +443,11 @@
 
                     card.addEventListener('click', () => {
                         selectedDate = new Date(date);
+                        selectedDate.setHours(0, 0, 0, 0);
                         renderDates();
                         updateSummaryDate();
-                        updateTimeSlots(); // New call
+                        updateTimeSlots(); 
+                        updateMapStatus(); // Refresh map colors for selected date
                     });
 
                     dateCardsContainer.appendChild(card);
@@ -448,35 +455,50 @@
             }
 
             function updateTimeSlots() {
-                if (!selectedDate) return;
-
                 const now = new Date();
-                const isToday = selectedDate.toDateString() === now.toDateString();
-
-                // For slots >= 24, they represent next-day hours (00:00, 01:00, 02:00)
-                // So if today is selected, they are always in the future (past midnight tonight)
-                // If tomorrow is selected, regular hours apply
-                const tomorrow = new Date(now);
-                tomorrow.setDate(now.getDate() + 1);
-                const isTomorrow = selectedDate.toDateString() === tomorrow.toDateString();
-
-                const currentHour = now.getHours();
-
+                const checkDate = selectedDate ? new Date(selectedDate) : new Date();
+                const year = checkDate.getFullYear();
+                const month = String(checkDate.getMonth() + 1).padStart(2, '0');
+                const day = String(checkDate.getDate()).padStart(2, '0');
+                const selectedDateStr = `${year}-${month}-${day}`;
+                
                 timeSlots.forEach(slot => {
                     const dataHour = parseInt(slot.dataset.hour);
-                    let isPast = false;
-
+                    const slotDateTime = new Date(checkDate);
+                    
                     if (dataHour >= 24) {
-                        // These slots are 00:00-02:00 of the NEXT day
-                        // Disabled only if tomorrow is selected AND current time has passed that hour
-                        const realHour = dataHour - 24; // 24->0, 25->1, 26->2
-                        isPast = isTomorrow && realHour <= currentHour;
+                        slotDateTime.setDate(slotDateTime.getDate() + 1);
+                        slotDateTime.setHours(dataHour - 24, 0, 0, 0);
                     } else {
-                        // Normal hours (14:00-23:00)
-                        isPast = isToday && dataHour <= currentHour;
+                        slotDateTime.setHours(dataHour, 0, 0, 0);
                     }
 
-                    if (isPast) {
+                    // Base disabling (past time)
+                    let isDisabled = slotDateTime < now;
+
+                    // Additional disabling (already booked for any of the selected tables)
+                    if (!isDisabled && selectedTables.length > 0) {
+                        // Format current slot time as HH:mm:ss for comparison
+                        const currentHour = dataHour >= 24 ? dataHour - 24 : dataHour;
+                        const slotStartTime = String(currentHour).padStart(2, '0') + ':00:00';
+                        
+                        const isBooked = selectedTables.some(selected => {
+                            const tableData = allTables.find(t => t.id == selected.id);
+                            if (!tableData || !tableData.bookings) return false;
+                            
+                            return tableData.bookings.some(b => {
+                                if (b.booking_date !== selectedDateStr) return false;
+                                
+                                // Check if slot falls within booking period
+                                // Note: b.start_time and b.end_time are in HH:mm:ss format
+                                return slotStartTime >= b.start_time && slotStartTime < b.end_time;
+                            });
+                        });
+                        
+                        if (isBooked) isDisabled = true;
+                    }
+
+                    if (isDisabled) {
                         slot.classList.add('disabled');
                         slot.classList.remove('active');
                     } else {
@@ -495,9 +517,82 @@
                 summaryDate.innerText = selectedDate.toLocaleDateString('id-ID', options);
             }
 
+            function updateMapStatus() {
+                const checkDate = selectedDate ? new Date(selectedDate) : new Date();
+                const year = checkDate.getFullYear();
+                const month = String(checkDate.getMonth() + 1).padStart(2, '0');
+                const day = String(checkDate.getDate()).padStart(2, '0');
+                const selectedDateStr = `${year}-${month}-${day}`;
+
+                allTables.forEach(table => {
+                    const tableIdStr = table.id.toString().padStart(2, '0');
+                    const tableEl = document.getElementById(`meja-${tableIdStr}`);
+                    if (!tableEl) return;
+
+                    let statusClass = 'available';
+                    let statusText = 'TERSEDIA';
+
+                    if (table.status === 'maintenance') {
+                        statusClass = 'maintenance';
+                        statusText = 'MAINTENANCE';
+                    } else {
+                        // Find if any booking exists for this table on selected date
+                        const booking = table.bookings.find(b => b.booking_date === selectedDateStr);
+                        if (booking) {
+                            if (booking.status === 'confirmed') {
+                                statusClass = 'occupied';
+                                statusText = 'TERISI';
+                            } else if (['pending', 'booked', 'dipesan'].includes(booking.status)) {
+                                statusClass = 'booked';
+                                statusText = 'DIPESAN';
+                            }
+                        }
+                    }
+
+                    // Update visual classes on map
+                    tableEl.className = tableEl.className.replace(/status-\w+/g, `status-${statusClass}`);
+                    tableEl.dataset.status = statusClass;
+
+                    // Update label color
+                    const label = tableEl.querySelector('.table-side-label, .table-number');
+                    if (label) {
+                        label.className = label.className.replace(/color-\w+/g, `color-${statusClass}`);
+                    }
+
+                    // Update tooltip elements
+                    const dot = tableEl.querySelector('.tm-status-dot');
+                    const txt = tableEl.querySelector('.tm-status-text');
+                    const btn = tableEl.querySelector('.tm-btn-add');
+
+                    if (dot) dot.className = `tm-status-dot dot-${statusClass}`;
+                    if (txt) {
+                        txt.className = `tm-status-text text-${statusClass}`;
+                        txt.innerText = statusText;
+                    }
+                    if (btn) {
+                        if (statusClass === 'available') {
+                            btn.disabled = false;
+                            btn.style.opacity = '1';
+                            btn.style.cursor = 'pointer';
+                            btn.style.background = 'linear-gradient(to right, var(--primary-cyan), #00c2ff)';
+                            btn.innerText = 'TAMBAH';
+                        } else {
+                            btn.disabled = true;
+                            btn.style.opacity = '0.5';
+                            btn.style.cursor = 'not-allowed';
+                            btn.style.background = '#333';
+                            btn.innerText = 'PENUH';
+                        }
+                    }
+                });
+            }
+
             let selectedTables = []; // Array to store multiple selected table objects
 
             function updateSelectedTablesList() {
+                // Update prices first based on current time
+                updateCalculations();
+
                 const listContainer = document.getElementById('selected-tables-list');
                 const badge = document.getElementById('tables-count-badge');
                 listContainer.innerHTML = '';
@@ -559,7 +654,6 @@
                     });
                 });
 
-                updateCalculations();
                 updateSummaryDate();
                 updateTimeSummary();
             }
@@ -587,6 +681,8 @@
             // Initial render
             renderDates();
             updateSummaryDate();
+            updateTimeSlots();
+            updateMapStatus();
 
             // Hover Tooltip Fallback JS
             tables.forEach(table => {
@@ -613,12 +709,10 @@
                     const status = table.dataset.status;
 
                     // Validation for Real-time Status
-                    if (status === 'occupied' || status === 'booked' || status === 'maintenance') {
+                    if (status === 'maintenance') {
                         Swal.fire({
-                            title: 'Meja Tidak Tersedia',
-                            text: status === 'maintenance'
-                                ? 'Gagal! Meja ini sedang maintenance.'
-                                : 'Gagal! Meja ini sedang digunakan atau sudah dipesan.',
+                            title: 'Meja Maintenance',
+                            text: 'Gagal! Meja ini sedang dalam perbaikan.',
                             icon: 'error',
                             confirmButtonColor: '#ff3b3b',
                             background: '#0f1115',
@@ -626,6 +720,9 @@
                         });
                         return;
                     }
+
+                    // Note: 'booked' or 'occupied' status doesn't block selection anymore, 
+                    // because the table might be free for a different time slot.
 
                     // Current behavior: Hover opens popup, click selection toggle
                     const id = table.dataset.id;
@@ -654,6 +751,7 @@
                     }
 
                     updateSelectedTablesList();
+                    updateTimeSlots(); // Refresh time slots based on new selection
                 });
             });
 
@@ -854,6 +952,7 @@
                     timeSlots.forEach(s => s.classList.remove('active'));
                     slot.classList.add('active');
                     updateTimeSummary();
+                    updateSelectedTablesList();
                 });
             });
 
@@ -864,7 +963,7 @@
                 durationValue.innerText = val + ' Jam';
                 document.getElementById('summary-duration').innerText = val + ' Jam';
                 updateTimeSummary();
-                updateCalculations();
+                updateSelectedTablesList();
             });
 
             function updateTimeSummary() {
@@ -891,9 +990,25 @@
 
             function updateCalculations() {
                 const duration = durationSelected ? parseInt(rangeSlider.value) : 0;
-                let subtotal = 0;
+                const activeTimeSlot = document.querySelector('.time-slot.active');
+                
+                let dynamicPrice = null;
+                if (activeTimeSlot) {
+                    const hour = parseInt(activeTimeSlot.dataset.hour);
+                    // Logika: Jam 2-5 sore -> 25000, Jam 6 sore-1 malam -> 35000
+                    if (hour >= 14 && hour <= 17) {
+                        dynamicPrice = 25000;
+                    } else if (hour >= 18 && hour <= 25) {
+                        dynamicPrice = 35000;
+                    }
+                }
 
+                let subtotal = 0;
                 selectedTables.forEach(t => {
+                    // Jika ada harga dinamis yang berlaku, gunakan itu
+                    if (dynamicPrice !== null) {
+                        t.price = dynamicPrice;
+                    }
                     subtotal += (parseInt(t.price) || 0) * duration;
                 });
 
@@ -916,6 +1031,7 @@
                     const orderData = {
                         tables: selectedTables,
                         date: document.getElementById('summary-date').innerText,
+                        isoDate: selectedDate ? selectedDate.getFullYear() + '-' + String(selectedDate.getMonth() + 1).padStart(2, '0') + '-' + String(selectedDate.getDate()).padStart(2, '0') : null,
                         time: document.getElementById('summary-time').innerText,
                         duration: document.getElementById('summary-duration').innerText,
                         subtotal: document.getElementById('summary-subtotal').innerText,

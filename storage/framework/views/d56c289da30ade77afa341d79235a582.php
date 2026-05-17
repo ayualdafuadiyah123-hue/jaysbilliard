@@ -203,21 +203,8 @@
                 const orderData = JSON.parse(orderDataRaw);
                 const cleanTotal = parseInt(orderData.total.replace(/[^0-9]/g, ''));
                 
-                // Fix Date Parsing (Robust way)
-                let formattedDate;
-                try {
-                    const dateObj = new Date(orderData.date);
-                    if (isNaN(dateObj.getTime())) {
-                        // Fallback if Date is invalid (e.g. Indonesian month names)
-                        // If it's "15 Mei 2024", we try to just use current date as last resort
-                        formattedDate = new Date().toISOString().split('T')[0];
-                        console.warn('Invalid date format in localStorage, using today as fallback:', orderData.date);
-                    } else {
-                        formattedDate = dateObj.toISOString().split('T')[0];
-                    }
-                } catch (e) {
-                    formattedDate = new Date().toISOString().split('T')[0];
-                }
+                // Use reliable isoDate from localStorage
+                const formattedDate = orderData.isoDate || new Date().toISOString().split('T')[0];
 
                 const payload = {
                     table_ids: orderData.tables.map(t => t.id),

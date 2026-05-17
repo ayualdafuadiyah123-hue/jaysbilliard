@@ -57,9 +57,12 @@ class DashboardController extends Controller
     public function meja()
     {
         $user = Auth::user();
-        $today = \Carbon\Carbon::now()->toDateString();
-        $tables = Table::with(['bookings' => function($query) use ($today) {
-            $query->where('booking_date', $today);
+        $today = \Carbon\Carbon::now('Asia/Jakarta')->toDateString();
+        // Load all tables with all active bookings to support dynamic date selection on frontend
+        $tables = Table::with(['bookings' => function($query) {
+            $query->whereIn('status', ['confirmed', 'booked', 'pending', 'dipesan'])
+                  ->where('booking_date', '>=', \Carbon\Carbon::now('Asia/Jakarta')->subDays(1))
+                  ->orderBy('start_time', 'asc');
         }])->get();
         
         $topbar_title = "Meja";

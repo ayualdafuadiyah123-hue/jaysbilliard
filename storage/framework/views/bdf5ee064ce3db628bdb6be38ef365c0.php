@@ -1,8 +1,7 @@
-@extends('layouts.app')
-@section('title', 'Tarif — Jay\'s Billiard')
+<?php $__env->startSection('title', 'Tarif — Jay\'s Billiard'); ?>
 
-@section('content')
-    {{-- ═══════════════════════════════ HEADER ═══════════════════════════════ --}}
+<?php $__env->startSection('content'); ?>
+    
     <section class="text-center pt-32 pb-8 px-6 max-w-3xl mx-auto">
         <h1 class="text-5xl md:text-6xl font-black uppercase text-white mb-4 tracking-wide">TARIF KAMI</h1>
         <p class="text-white/55 text-base leading-relaxed">
@@ -11,18 +10,18 @@
         </p>
     </section>
 
-    {{-- ═══════════════════════════════ PRICING CARDS ═══════════════════════════════ --}}
+    
     <section class="px-6 pb-24 max-w-7xl mx-auto">
         <div class="max-w-xl mx-auto">
             <div
                 class="bg-[#0d0e12] border border-white/10 rounded-[2.5rem] overflow-hidden flex flex-col transition-all duration-500 hover:-translate-y-4 hover:border-cyan-400/30 group shadow-[0_30px_60px_-15px_rgba(0,0,0,0.7)]">
-                {{-- Image Section --}}
+                
                 <div class="h-72 relative overflow-hidden">
                     <div class="absolute inset-0 bg-gradient-to-t from-[#0d0e12] via-transparent to-transparent z-10"></div>
-                    <img src="{{ asset('images/meja_premium.png') }}" alt="Reguler Table"
+                    <img src="<?php echo e(asset('images/meja_premium.png')); ?>" alt="Reguler Table"
                         class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110">
 
-                    {{-- Type Badge --}}
+                    
                     <div class="absolute top-8 left-8 z-20">
                         <span
                             class="bg-[#113a3e]/60 backdrop-blur-md text-[#00f2ff] border border-[#00f2ff]/30 px-5 py-2 rounded-full text-[11px] font-black uppercase tracking-[0.15em]">
@@ -30,20 +29,20 @@
                         </span>
                     </div>
 
-                    {{-- Title --}}
+                    
                     <div class="absolute bottom-1 left-8 z-20">
                         <h3 class="text-4xl font-black text-white uppercase tracking-tight">JAY'S BILLIARD PRICE LIST</h3>
                     </div>
                 </div>
 
-                {{-- Content Section --}}
+                
                 <div class="p-10 flex flex-col gap-10 flex-1">
-                    {{-- Open Daily Header --}}
+                    
                     <div class="border-b border-white/5 pb-6">
                         <p class="text-white/60 text-lg font-medium italic">Open Daily: 14:00 - 01:00 WIB</p>
                     </div>
 
-                    {{-- Happy Hour Section --}}
+                    
                     <div class="space-y-6">
                         <h4 class="text-[#00f2ff] text-xl font-black uppercase tracking-wide">HAPPY HOUR (SORE)</h4>
                         <div class="flex flex-col gap-4">
@@ -65,7 +64,7 @@
                         </div>
                     </div>
 
-                    {{-- Prime Time Section --}}
+                    
                     <div class="space-y-6">
                         <h4 class="text-[#00f2ff] text-xl font-black uppercase tracking-wide">PRIME TIME (MALAM)</h4>
                         <div class="flex flex-col gap-4">
@@ -89,9 +88,9 @@
 
 
 
-                    {{-- CTA --}}
+                    
                     <div class="mt-6 pt-10 border-t border-white/5">
-                        <a href="{{ route('login') }}"
+                        <a href="<?php echo e(route('login')); ?>"
                             class="flex items-center justify-center gap-4 w-full bg-[#00f2ff] text-black py-5 rounded-[1.25rem] text-sm font-black uppercase tracking-[0.1em] transition-all duration-300 hover:bg-cyan-300 hover:shadow-[0_0_40px_rgba(0,242,255,0.6)] hover:-translate-y-1 active:scale-95">
                             BOOK MEJA INI
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
@@ -106,7 +105,7 @@
         </div>
     </section>
 
-    {{-- ═══════════════════════════════ INFO SECTION ═══════════════════════════════ --}}
+    
     <section class="py-12 pb-20 px-6 max-w-[85rem] mx-auto border-t border-white/5">
         <div class="grid md:grid-cols-3 gap-8">
             <div class="flex gap-4 items-start">
@@ -159,4 +158,5 @@
             </div>
         </div>
     </section>
-@endsection
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\laragon\www\jaysbilliard-main\resources\views/website/tarif.blade.php ENDPATH**/ ?>

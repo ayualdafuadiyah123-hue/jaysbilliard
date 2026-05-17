@@ -34,7 +34,7 @@
                 Book a Table
             </a>
             <a href="<?php echo e(route('rates')); ?>" class="inline-flex items-center gap-2 bg-transparent text-white font-semibold text-sm uppercase tracking-wider px-8 py-3.5 rounded-lg border-2 border-white/30 transition-all hover:border-white/60 hover:bg-white/5 hover:-translate-y-0.5 w-full sm:w-auto justify-center">
-                Lihat Meja
+                Lihat Tarif
             </a>
         </div>
     </div>
@@ -62,7 +62,7 @@
         ], array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
         <?php echo $__env->make('component.c_website.feature-card', [
             'icon'        => '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#00e5ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 22h8"/><path d="M12 11v11"/><path d="M10 22V6.5a.5.5 0 0 0-.5-.5 3.498 3.498 0 0 1-3.237-4.766A.5.5 0 0 1 6.73 1h10.54a.5.5 0 0 1 .467.234A3.498 3.498 0 0 1 14.5 6a.5.5 0 0 0-.5.5V22"/></svg>',
-            'title'       => 'Bar Lengkap',
+            'title'       => 'F&B Area',
             'description' => 'Sajian rasa untuk menemani tiap kemenangan. Nikmati kemudahan akses menu favorit tanpa harus meninggalkan meja di Ruang Nyaman. Stay focused, stay cool.'
         ], array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
         <?php echo $__env->make('component.c_website.feature-card', [
@@ -74,20 +74,6 @@
 </section>
 
 
-<section class="py-24 px-6 max-w-7xl mx-auto">
-    <div class="flex items-center justify-between mb-8">
-        <h2 class="text-4xl font-bold text-white">Promo Saat Ini</h2>
-        <a href="<?php echo e(route('promos.index')); ?>" class="text-cyan-400 text-sm hover:underline cursor-pointer relative z-10 transition-colors">
-            Lihat Semua →
-        </a>
-    </div>
-
-    <div class="grid md:grid-cols-2 gap-6">
-        <?php $__currentLoopData = $promos; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $promo): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-            <?php echo $__env->make('component.c_website.promo-card', ['promo' => $promo], array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
-        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-    </div>
-</section>
 
 
 <section class="py-24 px-6 max-w-7xl mx-auto">
@@ -111,8 +97,8 @@
                     </span>
                     <div>
                         <p class="text-white font-semibold mb-1">Jam Buka</p>
-                        <p>Sen - Kam: 10:00 - 24:00</p>
-                        <p>Jum - Min: 10:00 - 02:00</p>
+                        <p>Setiap Hari</p>
+                        <p>14.00-01.00 WIB</p>
                     </div>
                 </div>
                 <div class="flex gap-4">

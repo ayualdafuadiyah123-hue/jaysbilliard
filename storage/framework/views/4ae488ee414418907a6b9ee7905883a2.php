@@ -1,24 +1,23 @@
-@extends('layouts.app')
-@section('title', 'Lokasi — Jay\'s Billiard')
+<?php $__env->startSection('title', 'Lokasi — Jay\'s Billiard'); ?>
 
-@section('content')
-    {{-- ═══════════════════════════════ HEADER ═══════════════════════════════ --}}
+<?php $__env->startSection('content'); ?>
+    
     <section class="pt-32 pb-8 px-6 max-w-6xl mx-auto">
         <h1 class="text-4xl md:text-5xl font-black uppercase text-white tracking-wide">TEMUKAN ARENA KAMI</h1>
     </section>
 
-    {{-- ═══════════════════════════════ INFO + MAP ═══════════════════════════════ --}}
+    
     <section class="px-6 pb-16 max-w-6xl mx-auto">
         <div class="grid md:grid-cols-2 gap-6 items-start">
 
-            {{-- Left: Info Card --}}
+            
             <div
                 class="bg-gradient-to-b from-[#0f1923] to-[#111118] border border-primary/12 rounded-2xl p-8 flex flex-col gap-6">
                 <span
                     class="inline-flex self-start text-primary text-[0.6rem] font-extrabold uppercase tracking-widest bg-primary/10 border border-primary/30 rounded-full px-3.5 py-1.5">KUNJUNGI
                     KAMI</span>
 
-                {{-- Alamat --}}
+                
                 <div class="flex gap-3 items-start">
                     <span class="flex items-center justify-center w-9 h-9 min-w-9 bg-primary/10 rounded-full mt-0.5">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
@@ -34,7 +33,7 @@
                     </div>
                 </div>
 
-                {{-- Jam Operasional --}}
+                
                 <div class="flex gap-3 items-start">
                     <span class="flex items-center justify-center w-9 h-9 min-w-9 bg-primary/10 rounded-full mt-0.5">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
@@ -54,7 +53,7 @@
                     </div>
                 </div>
 
-                {{-- Pertanyaan Umum --}}
+                
                 <div class="flex gap-3 items-start">
                     <span class="flex items-center justify-center w-9 h-9 min-w-9 bg-primary/10 rounded-full mt-0.5">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
@@ -70,7 +69,7 @@
                     </div>
                 </div>
 
-                {{-- WhatsApp CTA --}}
+                
                 <div class="mt-auto pt-4 border-t border-white/[0.06]">
                     <p class="text-white/40 text-xs mb-4">Respon cepat melalui WhatsApp</p>
                     <a href="https://wa.me/62283123456" target="_blank"
@@ -80,7 +79,7 @@
                 </div>
             </div>
 
-            {{-- Right: Map --}}
+            
             <div class="rounded-2xl overflow-hidden min-h-[25rem] border border-primary/12">
                 <iframe
                     src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3961.152290758776!2d109.13612127504331!3d-6.872349093126373!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e6fb900340ba34d%3A0x7a438cc8b3fd1052!2sJay&#39;s%20Billiard!5e0!3m2!1sid!2sid!4v1772697633190!5m2!1sid!2sid"
@@ -92,7 +91,7 @@
         </div>
     </section>
 
-    {{-- ═══════════════════════════════ GALLERY ═══════════════════════════════ --}}
+    
     <section class="px-6 pb-20 max-w-6xl mx-auto">
         <div class="flex flex-col md:flex-row items-start md:items-end justify-between gap-4 mb-6">
             <div>
@@ -105,17 +104,18 @@
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div
                 class="rounded-xl overflow-hidden border border-primary/10 transition-all hover:border-primary/30 hover:-translate-y-1">
-                <img src="{{ asset('images/gallery/balls.png') }}" alt="Billiard Balls" class="w-full h-56 object-cover" />
+                <img src="<?php echo e(asset('images/gallery/balls.png')); ?>" alt="Billiard Balls" class="w-full h-56 object-cover" />
             </div>
             <div
                 class="rounded-xl overflow-hidden border border-primary/10 transition-all hover:border-primary/30 hover:-translate-y-1">
-                <img src="{{ asset('images/gallery/cue.png') }}" alt="Cue Ball" class="w-full h-56 object-cover" />
+                <img src="<?php echo e(asset('images/gallery/cue.png')); ?>" alt="Cue Ball" class="w-full h-56 object-cover" />
             </div>
             <div
                 class="rounded-xl overflow-hidden border border-primary/10 transition-all hover:border-primary/30 hover:-translate-y-1">
-                <img src="{{ asset('images/gallery/players.png') }}" alt="Players" class="w-full h-56 object-cover" />
+                <img src="<?php echo e(asset('images/gallery/players.png')); ?>" alt="Players" class="w-full h-56 object-cover" />
             </div>
         </div>
     </section>
 
-@endsection
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\laragon\www\jaysbilliard-main\resources\views/website/lokasi.blade.php ENDPATH**/ ?>

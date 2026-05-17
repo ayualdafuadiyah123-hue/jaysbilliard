@@ -12,11 +12,13 @@ class AdminDashboardController extends Controller
 {
     public function index()
     {
-        $today = now()->toDateString();
+        $today = \Carbon\Carbon::now('Asia/Jakarta')->toDateString();
         
-        // Eager load only confirmed bookings for today to determine table status
+        // Load tables with only relevant bookings for today to determine current table status
         $tables = Table::with(['bookings' => function($query) use ($today) {
-            $query->where('booking_date', $today);
+            $query->where('booking_date', $today)
+                  ->whereIn('status', ['confirmed', 'booked', 'pending', 'dipesan'])
+                  ->orderBy('start_time', 'asc');
         }])->get();
 
         $menus = Menu::latest()->get();
