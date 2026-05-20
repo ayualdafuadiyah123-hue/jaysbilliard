@@ -70,7 +70,7 @@
                                 <div class="tm-image-container">
                                     <img src="{{ $table->image ? asset('storage/' . $table->image) : asset('images/hero-bg.png') }}"
                                         alt="Table">
-                                    <div class="tm-price-badge">Rp {{ number_format($table->price_per_hour, 0, ',', '.') }} /
+                                    <div class="tm-price-badge" style="display: none;">Rp {{ number_format($table->price_per_hour, 0, ',', '.') }} /
                                         JAM</div>
                                 </div>
                                 <div class="tm-body">
@@ -475,10 +475,10 @@
                     }
 
                     // Base disabling (past time)
-                    let isDisabled = slotDateTime < now;
+                    let isDisabled = selectedDate ? (slotDateTime < now) : false;
 
                     // Additional disabling (already booked for any of the selected tables)
-                    if (!isDisabled && selectedTables.length > 0) {
+                    if (selectedDate && !isDisabled && selectedTables.length > 0) {
                         // Format current slot time as HH:mm:ss for comparison
                         const currentHour = dataHour >= 24 ? dataHour - 24 : dataHour;
                         const slotStartTime = String(currentHour).padStart(2, '0') + ':00:00';

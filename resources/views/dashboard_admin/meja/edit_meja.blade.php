@@ -306,7 +306,7 @@
                             <div class="adm-preview-card-wrap">
                                 <div class="preview-table-card">
                                     <div class="preview-img-wrap">
-                                        <div class="preview-price-badge">Rp <span id="viewPrice">{{ number_format($table->price_per_hour, 0, ',', '.') }}</span></div>
+                                        <div class="preview-price-badge" style="display: none;">Rp <span id="viewPrice">{{ number_format($table->price_per_hour, 0, ',', '.') }}</span></div>
                                         <img src="{{ $table->image ? asset('storage/' . $table->image) : asset('images/hero-bg.png') }}" id="renderImg" alt="Preview">
                                     </div>
                                     <div class="preview-body">
@@ -363,11 +363,8 @@
                                 </div>
 
                                 <div class="form-row">
-                                    <div class="form-group">
-                                        <label class="form-label">Tarif Per Jam (Rp)</label>
-                                        <input type="number" name="price_per_hour" id="inpPrice" class="form-input" value="{{ (int)$table->price_per_hour }}">
-                                    </div>
-                                    <div class="form-group">
+                                    <input type="hidden" name="price_per_hour" id="inpPrice" value="{{ (int)$table->price_per_hour }}">
+                                    <div class="form-group" style="grid-column: span 2;">
                                         <label class="form-label">Kapasitas Maksimal</label>
                                         <input type="number" name="capacity" id="inpCap" class="form-input" value="{{ $table->capacity }}">
                                     </div>

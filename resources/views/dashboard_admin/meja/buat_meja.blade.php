@@ -55,7 +55,7 @@
                                     <div class="table-preview-card">
                                         <div class="table-preview-image">
                                             <img src="/images/hero-bg.png" id="previewImg" alt="Preview Table">
-                                            <div class="table-preview-price-tag">Rp <span id="previewPriceText">Lorem</span></div>
+                                            <div class="table-preview-price-tag" style="display: none;">Rp <span id="previewPriceText">Lorem</span></div>
                                         </div>
                                         <div class="table-preview-content">
                                             <div class="table-preview-header">
@@ -107,11 +107,8 @@
                                     </div>
                                 </div>
                                 <div class="form-row">
-                                    <div class="form-group">
-                                        <label class="form-label">Tarif Per Jam ($)</label>
-                                        <input type="number" name="price_per_hour" id="priceInput" class="form-input" value="0">
-                                    </div>
-                                    <div class="form-group">
+                                    <input type="hidden" name="price_per_hour" id="priceInput" value="0">
+                                    <div class="form-group" style="grid-column: span 2;">
                                         <label class="form-label">Kapasitas</label>
                                         <input type="number" name="capacity" id="capacityInput" class="form-input" value="0">
                                     </div>

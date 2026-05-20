@@ -87,7 +87,6 @@
                     @forelse($tables ?? [] as $table)
                         <div class="adm-meja-card">
                             <div class="card-image-wrap">
-                                <span class="price-badge">Rp {{ number_format($table->price_per_hour, 0, ',', '.') }} / JAM</span>
                                 @php
                                     $imagePath = $table->image;
                                     if ($imagePath && !Str::startsWith($imagePath, ['http://', 'https://'])) {
