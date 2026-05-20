@@ -98,38 +98,6 @@
                     </div>
                 </div>
 
-               
-                <section class="adm-chart-section">
-                    <div class="adm-chart-header">
-                         <div class="adm-chart-titles">
-                            <h2 class="adm-chart-title">Tren Pendapatan</h2>
-                            <p class="adm-chart-sub">Metrik pendapatan per jam</p>
-                        </div>
-                        <?php echo $__env->make('component.c_dashboard.dropdown.option_dashboard', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
-                    </div>
-                    <div class="adm-chart-area">
-                        <div class="adm-chart-bars">
-                            <?php $__currentLoopData = $chartData; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $hour => $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                <?php
-                                    $colorClass = 'adm-bar--gray';
-                                    if ($data['percentage'] >= 80) {
-                                        $colorClass = 'adm-bar--cyan';
-                                    } elseif ($data['percentage'] >= 60) {
-                                        $colorClass = 'adm-bar--cyan-alt';
-                                    } elseif ($data['percentage'] >= 40) {
-                                        $colorClass = 'adm-bar--teal';
-                                    }
-                                ?>
-                                <div class="adm-bar-group" title="Rp <?php echo e(number_format($data['revenue'], 0, ',', '.')); ?>">
-                                    <div class="adm-bar-v <?php echo e($colorClass); ?>" style="height: <?php echo e($data['percentage']); ?>%;"></div>
-                                    <?php if($hour % 2 == 0): ?>
-                                        <span class="adm-bar-label"><?php echo e(sprintf('%02d:00', $hour)); ?></span>
-                                    <?php endif; ?>
-                                </div>
-                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                        </div>
-                    </div>
-                </section>
 
                 
                 <section class="adm-meja-section">
@@ -313,7 +281,6 @@
     <script src="<?php echo e(asset('js/js_component/logout.js')); ?>"></script>
 <script src="<?php echo e(asset('js/js_component/chat.js')); ?>"></script>
     <script src="<?php echo e(asset('js/js_component/akhiri.js')); ?>"></script>
-    <script src="<?php echo e(asset('js/js_component/option_dashboard.js')); ?>"></script>
     
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>

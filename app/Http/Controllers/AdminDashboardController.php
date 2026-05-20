@@ -31,37 +31,7 @@ class AdminDashboardController extends Controller
                                 
         $totalPemesanan = \App\Models\Booking::where('booking_date', $today)->count();
 
-        // Calculate hourly revenue for chart (10:00 to 22:00)
-        $hourlyRevenue = [];
-        $maxRevenue = 0;
-        
-        for ($i = 10; $i <= 22; $i++) {
-            $startHour = sprintf('%02d:00:00', $i);
-            $endHour = sprintf('%02d:59:59', $i);
-            
-            $revenue = \App\Models\Booking::where('booking_date', $today)
-                        ->whereIn('status', ['booked', 'confirmed', 'completed'])
-                        ->whereBetween('start_time', [$startHour, $endHour])
-                        ->sum('total_price');
-                        
-            $hourlyRevenue[$i] = $revenue;
-            if ($revenue > $maxRevenue) {
-                $maxRevenue = $revenue;
-            }
-        }
-        
-        // Calculate percentage for each hour
-        $chartData = [];
-        foreach ($hourlyRevenue as $hour => $revenue) {
-            $percentage = $maxRevenue > 0 ? ($revenue / $maxRevenue) * 100 : 0;
-            // Minimum height for visibility if there's revenue, otherwise 10%
-            $chartData[$hour] = [
-                'revenue' => $revenue,
-                'percentage' => $revenue > 0 ? max(20, $percentage) : 10
-            ];
-        }
-
-        return view('dashboard_admin.dashboard', compact('tables', 'menus', 'pendapatanHariIni', 'totalPemesanan', 'chartData'));
+        return view('dashboard_admin.dashboard', compact('tables', 'menus', 'pendapatanHariIni', 'totalPemesanan'));
 
     }
 

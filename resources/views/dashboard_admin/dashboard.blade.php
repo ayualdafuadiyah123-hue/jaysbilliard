@@ -98,38 +98,6 @@
                     </div>
                 </div>
 
-               {{-- ═══════ TREN PENDAPATAN (BAR CHART) ═══════ --}}
-                <section class="adm-chart-section">
-                    <div class="adm-chart-header">
-                         <div class="adm-chart-titles">
-                            <h2 class="adm-chart-title">Tren Pendapatan</h2>
-                            <p class="adm-chart-sub">Metrik pendapatan per jam</p>
-                        </div>
-                        @include('component.c_dashboard.dropdown.option_dashboard')
-                    </div>
-                    <div class="adm-chart-area">
-                        <div class="adm-chart-bars">
-                            @foreach($chartData as $hour => $data)
-                                @php
-                                    $colorClass = 'adm-bar--gray';
-                                    if ($data['percentage'] >= 80) {
-                                        $colorClass = 'adm-bar--cyan';
-                                    } elseif ($data['percentage'] >= 60) {
-                                        $colorClass = 'adm-bar--cyan-alt';
-                                    } elseif ($data['percentage'] >= 40) {
-                                        $colorClass = 'adm-bar--teal';
-                                    }
-                                @endphp
-                                <div class="adm-bar-group" title="Rp {{ number_format($data['revenue'], 0, ',', '.') }}">
-                                    <div class="adm-bar-v {{ $colorClass }}" style="height: {{ $data['percentage'] }}%;"></div>
-                                    @if($hour % 2 == 0)
-                                        <span class="adm-bar-label">{{ sprintf('%02d:00', $hour) }}</span>
-                                    @endif
-                                </div>
-                            @endforeach
-                        </div>
-                    </div>
-                </section>
 
                 {{-- ═══════ STATUS MEJA (PREMIUM MOCKUP) ═══════════ --}}
                 <section class="adm-meja-section">
@@ -309,7 +277,6 @@
     <script src="{{ asset('js/js_component/logout.js') }}"></script>
 <script src="{{ asset('js/js_component/chat.js') }}"></script>
     <script src="{{ asset('js/js_component/akhiri.js') }}"></script>
-    <script src="{{ asset('js/js_component/option_dashboard.js') }}"></script>
     
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
